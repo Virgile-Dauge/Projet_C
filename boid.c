@@ -13,6 +13,9 @@ void set_boid_pos(boid_t *b, vecteur_t *v){
 vecteur_t *get_boid_pos(boid_t *b){
 	return b->v;
 }
+void add_boid(boid_t *b, vecteur_t *v){
+	b->v += v;
+}
 void print_boid(boid_t *b){
 	printf("<&°%st><l\n",toString_vecteur(b->v));	
 }
