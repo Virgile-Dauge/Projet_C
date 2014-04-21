@@ -5,7 +5,7 @@
 int init_modele(){
 
 }
-int calcul_deplacements(int *a){
+int calcul_deplacements(int *a){     // mon commentaire
 	printf("calcul de a\n");
 	regle_1(a);
 	return *a;
