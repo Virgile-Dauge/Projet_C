@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "vecteur.h"
 vecteur_t *new_vecteur(double x, double y, double z){
-	vecteur_t *v = malloc(sizeof(x)+sizeof(y)+sizeof(z));
+	vecteur_t *v = malloc(sizeof(vecteur_t));
 	v->x = x;
 	v->y = y; 
 	v->z = z;
@@ -25,6 +25,11 @@ void set_vecteur(vecteur_t *v, double x, double y, double z){
 	v->x = x;
 	v->y = y; 
 	v->z = z;
+}
+void copy_vecteur(vecteur_t *v,vecteur_t *source){
+	v->x = source->x;
+	v->y = source->y; 
+	v->z = source->z;
 }
 int equals_vecteur(vecteur_t *v0,vecteur_t *v1){
 	if(v0->x == v1->x && v0->y == v1->y && v0->z == v1->z){

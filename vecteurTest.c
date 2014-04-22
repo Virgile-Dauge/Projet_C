@@ -119,9 +119,6 @@ int toString_vecteur_test(){
 		printf("%s",chaineAttendue);
 		return 0;
 	}
-
-	
-
 }
 
 

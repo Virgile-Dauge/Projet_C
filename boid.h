@@ -1,5 +1,6 @@
 #ifndef BOID_H
 #define BOID_H
+#include "vecteur.h"
 
 typedef struct boid{
 	int id;
