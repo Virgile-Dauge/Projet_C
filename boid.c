@@ -16,7 +16,7 @@ void set_boid_pos(boid_t *b, vecteur_t *v){
 vecteur_t *get_boid_pos(boid_t *b){
 	return b->v;
 }
-void add_boid(boid_t *b, vecteur_t *v){
+void add_boid_pos(boid_t *b, vecteur_t *v){
 	add_vecteur(b->v,v);
 }
 void print_boid(boid_t *b){
