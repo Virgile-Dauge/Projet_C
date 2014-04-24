@@ -12,23 +12,29 @@ int main(int argc, char * argv){
 	SDL_Event event;
 	int quit =0;
 	int fullscreen =0;
-	while(SDL_PollEvent(&event)){
-		switch(event.type)
-		{
-			//case SDL_QUIT: quit=1; break;
-			case SDL_KEYUP:
-				if(event.key.keysym.sym == SDLK_f){
-					if(fullscreen){
-						fullscreen=0;
-						SDL_SetWindowFullscreen(pWindow,0);
-					}else{
-						fullscreen=1;
-						SDL_SetWindowFullscreen(pWindow,SDL_WINDOW_FULLSCREEN);
+	while(!quit){
+		while(SDL_PollEvent(&event)){
+			switch(event.type)
+			{
+				case SDL_QUIT: 
+					quit=1;  
+					break;
+				case SDL_KEYUP:
+					if(event.key.keysym.sym == SDLK_f){
+						if(fullscreen){
+							fullscreen=0;
+							SDL_SetWindowFullscreen(pWindow,0);
+						}else{
+							fullscreen=1;
+							SDL_SetWindowFullscreen(pWindow,SDL_WINDOW_FULLSCREEN);
+						}
 					}
-				}
-				break;	
+					break;	
+			}
 		}
 	}
+	SDL_DestroyWindow(fenetre);
+	SDL_Quit();
 
 }
 int init(SDL_Window* fenetre){
@@ -37,7 +43,7 @@ int init(SDL_Window* fenetre){
 		fprintf(stdout,"Échec de l'initialisation de la SDL (%s)\n",SDL_GetError());
 	return -1;
 	}
-	fenetre = SDL_CreateWindow("Ma première application SDL2",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640,480,SDL_WINDOW_SHOWN);
+	fenetre = SDL_CreateWindow("boid v0.0",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640,480,SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 }
 
 
