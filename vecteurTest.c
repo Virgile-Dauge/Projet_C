@@ -10,6 +10,7 @@ int new_vecteur_test();
 int add_vecteur_test();
 int add_multi_vecteurs_test();
 int set_vecteur_test();
+int copy_vecteur_test();
 int toString_vecteur_test();
 
 int main(int argc, char * argv){
@@ -19,6 +20,7 @@ int main(int argc, char * argv){
 	add_vecteur_test();
 	add_multi_vecteurs_test();
 	set_vecteur_test();
+	copy_vecteur_test();
 	toString_vecteur_test();
 }
 int new_vecteur_test(){
@@ -100,6 +102,25 @@ int set_vecteur_test(){
 		return 1;
 	}else{
 		printf("set_vecteur [NOK]\n");
+		return 0;
+	}
+}
+int copy_vecteur_test(){
+	//vecteur témoin
+	vecteur_t *vecteurAttendu = new_vecteur(4.65,68.4,98);
+
+	vecteur_t *v = new_vecteur(1,2,3);
+	vecteur_t *source = new_vecteur(4.65,68.4,98);
+
+	copy_vecteur(v,source);
+
+	if(equals_vecteur(v,vecteurAttendu)){
+		printf("copy_vecteur [OK]\n");
+		return 1;
+	}else{
+		printf("copy_vecteur [NOK]\n");
+		printf("%s",toString_vecteur(v));
+		printf("%s",toString_vecteur(vecteurAttendu));
 		return 0;
 	}
 }
