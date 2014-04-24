@@ -27,11 +27,13 @@ vecteur_t *somme_pos(boid_t *tab[],int tailleTab){
 	return somme;
 }
 vecteur_t *regle_1(boid * b,vecteur_t * somme, int nbPoisson){
-	
-
+	vecteur_t *v = new_vecteur(0,0,0);
+	copy_vecteur(v,somme);
+	div_vecteur(sub_vecteur(v, vecteur_t), nbPoisson);
+	return v;
 }
 
 
-vecteur_t *regle_2(int *a){
+vecteur_t *regle_2(boid *b, vecteur *v){
 	
 }
