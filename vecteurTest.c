@@ -24,8 +24,8 @@ int main(int argc, char * argv){
 	toString_vecteur_test();
 }
 int new_vecteur_test(){
-	vecteur_t *v = new_vecteur(1,2,3);
-	if(v->x ==1 && v->y ==2 && v->z ==3){
+	vecteur_t *pos = new_vecteur(1,2,3);
+	if(pos->x ==1 && pos->y ==2 && pos->z ==3){
 		printf("new_vecteur [OK]\n");
 		return 1;
 	}else{
@@ -35,11 +35,11 @@ int new_vecteur_test(){
 }
 int equals_vecteur_test(){
 
-	vecteur_t *v0 = new_vecteur(1,2,3);
-	vecteur_t *v1 = new_vecteur(4,58.5,3);
-	vecteur_t *v2 = new_vecteur(4,58.5,3);
+	vecteur_t *pos0 = new_vecteur(1,2,3);
+	vecteur_t *pos1 = new_vecteur(4,58.5,3);
+	vecteur_t *pos2 = new_vecteur(4,58.5,3);
 
-	if(!equals_vecteur(v0,v1) && equals_vecteur(v1,v2)){
+	if(!equals_vecteur(pos0,pos1) && equals_vecteur(pos1,pos2)){
 		printf("equals_vecteur [OK]\n");
 		return 1;
 	}else{
@@ -49,14 +49,14 @@ int equals_vecteur_test(){
 }
 int add_vecteur_test(){
 	//deux vecteur a additionner
-	vecteur_t *v0 = new_vecteur(1,2,3);
-	vecteur_t *v1 = new_vecteur(4,58.5,3);
+	vecteur_t *pos0 = new_vecteur(1,2,3);
+	vecteur_t *pos1 = new_vecteur(4,58.5,3);
 	//vecteur attendu 
 	vecteur_t *vecteurAttendu = new_vecteur(5,60.5,6);
 
-	add_vecteur(v0,v1);
+	add_vecteur(pos0,pos1);
 
-	if(equals_vecteur(v0,vecteurAttendu)){
+	if(equals_vecteur(pos0,vecteurAttendu)){
 		printf("add_vecteur [OK]\n");
 		return 1;
 	}else{
@@ -68,21 +68,21 @@ int add_multi_vecteurs_test(){
 	//vecteur témoin
 	vecteur_t *vecteurAttendu = new_vecteur(11,12,8);
 	//calcul du vecteur
-	vecteur_t *v = new_vecteur(1,2,3);
-	vecteur_t *v0 = new_vecteur(0,2,1);
-	vecteur_t *v1 = new_vecteur(1,2,1);
-	vecteur_t *v2 = new_vecteur(2,2,1);
-	vecteur_t *v3 = new_vecteur(3,2,1);
-	vecteur_t *v4 = new_vecteur(4,2,1);
+	vecteur_t *pos = new_vecteur(1,2,3);
+	vecteur_t *pos0 = new_vecteur(0,2,1);
+	vecteur_t *pos1 = new_vecteur(1,2,1);
+	vecteur_t *pos2 = new_vecteur(2,2,1);
+	vecteur_t *pos3 = new_vecteur(3,2,1);
+	vecteur_t *pos4 = new_vecteur(4,2,1);
 	vecteur_t *tab[5];
-	tab[0]=v0;
-	tab[1]=v1;
-	tab[2]=v2;
-	tab[3]=v3;
-	tab[4]=v4;
-	add_multi_vecteurs(v,tab,5);
+	tab[0]=pos0;
+	tab[1]=pos1;
+	tab[2]=pos2;
+	tab[3]=pos3;
+	tab[4]=pos4;
+	add_multi_vecteurs(pos,tab,5);
 
-	if(equals_vecteur(v,vecteurAttendu)){
+	if(equals_vecteur(pos,vecteurAttendu)){
 		printf("add_multi_vecteur [OK]\n");
 		return 1;
 	}else{
@@ -94,10 +94,10 @@ int set_vecteur_test(){
 	//vecteur témoin
 	vecteur_t *vecteurAttendu = new_vecteur(4.65,68.4,98);
 
-	vecteur_t *v = new_vecteur(1,2,3);
-	set_vecteur(v,4.65,68.4,98);
+	vecteur_t *pos = new_vecteur(1,2,3);
+	set_vecteur(pos,4.65,68.4,98);
 
-	if(equals_vecteur(v,vecteurAttendu)){
+	if(equals_vecteur(pos,vecteurAttendu)){
 		printf("set_vecteur [OK]\n");
 		return 1;
 	}else{
@@ -109,17 +109,17 @@ int copy_vecteur_test(){
 	//vecteur témoin
 	vecteur_t *vecteurAttendu = new_vecteur(4.65,68.4,98);
 
-	vecteur_t *v = new_vecteur(1,2,3);
+	vecteur_t *pos = new_vecteur(1,2,3);
 	vecteur_t *source = new_vecteur(4.65,68.4,98);
 
-	copy_vecteur(v,source);
+	copy_vecteur(pos,source);
 
-	if(equals_vecteur(v,vecteurAttendu)){
+	if(equals_vecteur(pos,vecteurAttendu)){
 		printf("copy_vecteur [OK]\n");
 		return 1;
 	}else{
 		printf("copy_vecteur [NOK]\n");
-		printf("%s",toString_vecteur(v));
+		printf("%s",toString_vecteur(pos));
 		printf("%s",toString_vecteur(vecteurAttendu));
 		return 0;
 	}
@@ -128,8 +128,8 @@ int toString_vecteur_test(){
 	//chaine Attendue
 	char *chaineAttendue = "(1.000000,2.000000,3.000000)\n";
 	char *chaineObtenue;
-	vecteur_t *v = new_vecteur(1,2,3);
-	chaineObtenue =toString_vecteur(v);
+	vecteur_t *pos = new_vecteur(1,2,3);
+	chaineObtenue =toString_vecteur(pos);
 	
 	if(strcmp(chaineAttendue,chaineObtenue)==0){
 		printf("toString_vecteur [OK]\n");
