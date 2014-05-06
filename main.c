@@ -1,79 +1,112 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL/SDL.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include "main.h"
 #include "modele.h"
 #include "vecteur.h"
 #include "boid.h"
-#include <SDL/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include "affichage.h"
 
 int main(int argc, char * argv){
 	//INITIALISATION DE LA SDL
-	init(800,600);
+	int xPix=800;
+	int yPix=600;
+	init(xPix,yPix);
 	SDL_Event event;
 	int quit =0;
+	//entier mémorisant le temps écoulé depuis la derniere synchro
+	int lastSynchro=0;
+	int temps=0;
+	int fps=600;
+	int fullscreen = 0;
+	double a=0.0;
 	//dessiner(0,0,0);
+	vecteur_t *v = new_vecteur(10,10,10);
 	boid_t *b = new_boid(new_vecteur(0,0,0));
-	dessiner_boid(b);
+	gluLookAt(200,20,20,0,0,0,0,0,1);
 	while(!quit){
 		//gestion des événements
 		while(SDL_PollEvent(&event)){
 			switch(event.type)
 			{	
 				//si l'utilisateur clique sur la croix
-				case SDL_QUIT: 
+				case SDL_QUIT:
+					//arret de l'application 
 					quit=1;  
 					break;
 				//si l'événemenet correspond à un appui sur une touche
 				case SDL_KEYUP:
+				//si appui sur la touche echap
+					if(event.key.keysym.sym == SDLK_ESCAPE){
+						//arret de l'application
+						quit=1;  
+					}
+					break;
 					//si appui sur la touche f
 					if(event.key.keysym.sym == SDLK_f){
-						maj_affichage();
-						/*
+						/*test fullscreen
 						if(fullscreen){
 							fullscreen=0;
-							printf("mode fenetré");
-							SDL_SetWindowFullscreen(fenetre,0);
+							SDL_SetVideoMode(xPix,yPix, 32, SDL_OPENGL | SDL_RESIZABLE);
 						}else{
 							fullscreen=1;
-							printf("mode plein écran");
-							SDL_SetWindowFullscreen(fenetre,SDL_WINDOW_FULLSCREEN);
+							SDL_SetVideoMode(xPix,yPix, 32, SDL_OPENGL | SDL_FULLSCREEN);
 						}
 						*/
 					}
 					break;	
 			}
-
 		}
+		//tâches effectuées en permanance
+		
+		//récupération du temps écoulé depuis le lancement de l'application
+		temps = SDL_GetTicks();
+		if(temps - lastSynchro > 1000/fps){
+			pre_dessin();
+			int i;
+			for(i=0;i<5;i++){
+				dessin_point(i*15,0,0,10,0,0,255);
+			}
+			maj_affichage();
+			lastSynchro = SDL_GetTicks();
+		}else{
+			//sinon on endors le processus (économie de calculs processeur)
+			SDL_Delay(1000/fps*(temps - lastSynchro));
+		}
+		/*
+		add_boid_pos(b,v);
+		dessiner_boid(b);
+		maj_affichage();
+		*/
 	}
 	SDL_Quit();
 }
+/*
 void dessiner_boid(boid_t *b){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
     glClear( GL_COLOR_BUFFER_BIT );
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity( );
-    gluLookAt(50,50,50,0,0,0,0,0,1);
-	glTranslated(b->pos->x,b->pos->y,b->pos->z);
-	glBegin(GL_POLYGON);
-	glColor3ub(0,0,255);
-	glVertex3d(5,0,0);
-	glVertex3d(1,2,0);
-	glVertex3d(1,-2,0);
-	glVertex3d(0,0,3);
-	//glVertex3d(0,0,-2);
-	glVertex3d(-8,0,0);
-
-	glColor3ub(0,255,0); //face verte
-    glVertex3d(5,0,0);
-    glVertex3d(1,2,0);
-    glVertex3d(1,-2,0);
-    glVertex3d(1,1,1);
-    glVertex3d(-8,0,0);
-    
-	glEnd();
-    glFlush();
+    gluLookAt(50,50,50,0,0,0,0,0,0);
+    //glTranslated(10,10,10);
+	//glTranslated(b->pos->x,b->pos->y,b->pos->z);
+	glPointSize(10);
+		glBegin(GL_POINTS);
+		glColor3ub(0,0,50);
+		glVertex3d(0,0,0);
+		glEnd();
+		glTranslated(0,5,0);
+		glBegin(GL_POINTS);
+		glColor3ub(0,0,100);
+		glVertex3d(0,0,0);
+		glEnd();
+		glTranslated(5,0,0);
+		glBegin(GL_POINTS);
+		glColor3ub(0,0,150);
+		glVertex3d(0,0,0);
+		glEnd();
 }
 void dessiner(int a, int b, int c)
 {
@@ -81,11 +114,11 @@ void dessiner(int a, int b, int c)
     glClear( GL_COLOR_BUFFER_BIT );
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity( );
-    gluLookAt(3,4,1,0,0,0,0,0,1);
+    //gluLookAt(20,20,20,0,0,0,0,0,1);
 
-    glRotated(a,0,0,1);
-    glRotated(b,1,0,0);
-    glRotated(c,0,1,0);
+    glRotatef(a,0,0,1);
+    glRotatef(b,1,0,0);
+    glRotatef(c,0,1,0);
 
     glBegin(GL_QUADS);
     glColor3ub(255,0,0); //face rouge
@@ -118,6 +151,42 @@ void dessiner(int a, int b, int c)
     glVertex3d(1,1,1);
     glVertex3d(-1,1,1);
     glVertex3d(-1,-1,1);
+    glEnd();
+
+    glTranslated(5,0,0);
+
+    glBegin(GL_QUADS);
+    glColor3ub(255,0,0); //face rouge
+    glVertex3d(1,1,1);
+    glVertex3d(1,1,-1);
+    glVertex3d(-1,1,-1);
+    glVertex3d(-1,1,1);
+    glColor3ub(0,255,0); //face verte
+    glVertex3d(1,-1,1);
+    glVertex3d(1,-1,-1);
+    glVertex3d(1,1,-1);
+    glVertex3d(1,1,1);
+    glColor3ub(0,0,255); //face bleue
+    glVertex3d(-1,-1,1);
+    glVertex3d(-1,-1,-1);
+    glVertex3d(1,-1,-1);
+    glVertex3d(1,-1,1);
+    glColor3ub(255,255,0); //face jaune
+    glVertex3d(-1,1,1);
+    glVertex3d(-1,1,-1);
+    glVertex3d(-1,-1,-1);
+    glVertex3d(-1,-1,1);
+    glColor3ub(0,255,255); //face cyan
+    glVertex3d(1,1,-1);
+    glVertex3d(1,-1,-1);
+    glVertex3d(-1,-1,-1);
+    glVertex3d(-1,1,-1);
+    glColor3ub(255,0,255); //face magenta
+    glVertex3d(1,-1,1);
+    glVertex3d(1,1,1);
+    glVertex3d(-1,1,1);
+    glVertex3d(-1,-1,1);
+    glEnd();
 
     glEnd();
     glFlush();
@@ -146,7 +215,9 @@ int init(int xPix, int yPix){
     glEnable(GL_DEPTH_TEST);
 }
 int maj_affichage(){
+	glFlush();
 	SDL_GL_SwapBuffers();
 }
+*/
 
 
