@@ -10,22 +10,27 @@
 #include "affichage.h"
 
 int main(int argc, char * argv){
-	//INITIALISATION DE LA SDL
+	//variables pour SDL
 	int xPix=800;
 	int yPix=600;
+	int quit =0;
+	int lastSynchro=0; //entier mémorisant le temps écoulé depuis la derniere synchro
+	int temps=0;
+	int fps=60;
+	int fullscreen = 0;
+	//INITIALISATION DE LA SDL
 	init(xPix,yPix);
 	SDL_Event event;
-	int quit =0;
-	//entier mémorisant le temps écoulé depuis la derniere synchro
-	int lastSynchro=0;
-	int temps=0;
-	int fps=600;
-	int fullscreen = 0;
-	double a=0.0;
-	//dessiner(0,0,0);
-	vecteur_t *v = new_vecteur(10,10,10);
-	boid_t *b = new_boid(new_vecteur(0,0,0));
-	gluLookAt(200,20,20,0,0,0,0,0,1);
+	//variables du modèle 
+	int nbMaxBoids=10;
+	int nbBoids=0;
+	boid_t *tabBoids[10];
+	int j;
+	for(j=0;j<nbMaxBoids;j++){
+		*tabBoids[j]= *new_boid(new_vecteur(rand()%(50),rand()%(50),rand()%(50)));
+		nbBoids++;
+	}
+	gluLookAt(200,200,200,0,0,0,0,0,1);
 	while(!quit){
 		//gestion des événements
 		while(SDL_PollEvent(&event)){
@@ -66,8 +71,11 @@ int main(int argc, char * argv){
 		if(temps - lastSynchro > 1000/fps){
 			pre_dessin();
 			int i;
-			for(i=0;i<5;i++){
-				dessin_point(i*15,0,0,10,0,0,255);
+			boid_t *b =NULL;
+			for(i=0;i<nbBoids;i++){
+				b = tabBoids[i];
+				dessin_boid(b);
+				calcul_deplacements(tabBoids,i ,nbBoids);
 			}
 			maj_affichage();
 			lastSynchro = SDL_GetTicks();

@@ -79,7 +79,7 @@ void dessin_point_from_vect(vecteur_t *v,int taille, int r, int g, int b){
 	glEnd();
 }
 void dessin_boid(boid_t *b){
-
+	dessin_point_from_vect(b->pos,5,0,0,255);
 }
 void maj_affichage(){
 	glFlush();

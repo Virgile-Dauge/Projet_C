@@ -6,7 +6,9 @@
 boid_t *new_boid(vecteur_t *vect){
 	boid_t *b = malloc(sizeof(boid_t));
 	b->pos = malloc(sizeof(vecteur_t));
+	b->vit = malloc(sizeof(vecteur_t));
 	b->id = 0;
+	b->vit = new_vecteur(0,0,0);
 	copy_vecteur(b->pos,vect);
 	return b;
 }
