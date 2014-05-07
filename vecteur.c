@@ -3,10 +3,15 @@
 #include "vecteur.h"
 vecteur_t *new_vecteur(double x, double y, double z){
 	vecteur_t *pos = malloc(sizeof(vecteur_t));
-	pos->x = x;
-	pos->y = y; 
-	pos->z = z;
-	return pos;
+	if (pos){
+		pos->x = x;
+		pos->y = y; 
+		pos->z = z;
+		return pos;
+	}else{
+        fprintf (stderr, "Memoire insuffisante\n");
+        exit (EXIT_FAILURE);
+    }
 }
 void add_vecteur(vecteur_t *pos1, vecteur_t *pos2){
 	pos1->x += pos2->x;
@@ -18,8 +23,13 @@ void sub_vecteur(vecteur_t *pos1, vecteur_t *pos2){
 	pos1->y -= pos2->y;
 	pos1->z -= pos2->z;
 }
-void div_vecteur(vecteur_t *pos1, int nbPoisson){
-	pos1->x=pos1->x/nbPoisson;
+void div_vecteur(vecteur_t *pos1, int coef){
+	if(coef == 0){
+		coef =1;
+	}
+	pos1->x=pos1->x/coef;
+	pos1->y=pos1->y/coef;
+	pos1->z=pos1->z/coef;
 }
 
 void add_multi_vecteurs(vecteur_t *pos1, vecteur_t *tab[], int tailleTab){
@@ -51,7 +61,7 @@ void print_vecteur(vecteur_t *pos){
 	printf("(%f,%f,%f\n)",pos->x , pos->y, pos->z);
 }
 char *toString_vecteur(vecteur_t *pos){
-	char *chaine;
+	char *chaine = NULL;
 	sprintf(chaine,"(%f,%f,%f)\n",pos->x , pos->y, pos->z);
 	return chaine;
 }
