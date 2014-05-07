@@ -14,6 +14,7 @@ void set_boid_pos(boid_t *b, vecteur_t *pos);
 vecteur_t *get_boid_pos(boid_t *b);
 void add_boid_pos(boid_t *b, vecteur_t *pos);
 int equals_boid(boid_t *b1, boid_t *b2);
-int visible(boid_t *b, vecteur_t *posObjet);
+double distance_boid(boid_t *b, vecteur_t *v);
+int boid_can_see(boid_t *b, vecteur_t *posObjet);
 void print_boid(boid_t *b);
 #endif
