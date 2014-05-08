@@ -62,5 +62,5 @@ int boid_can_see(boid_t *b, vecteur_t *posObjet){
 	}
 }
 void print_boid(boid_t *b){
-	printf("<&°%st><l\n",toString_vecteur(b->pos));	
+	printf("<&°(%f,%f,%f)t><l\n",b->pos->x,b->pos->y,b->pos->z);	
 }

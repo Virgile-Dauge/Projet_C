@@ -4,6 +4,7 @@
 #include "boid.h"
 
 //gcc boidTest.c boid.c vecteur.c -o boidTest -Wall -Wextra -Wunreachable-code -Wwrite-strings -lm
+
 int new_boid_test();
 int equals_boid_test();
 int set_boid_pos_test();
