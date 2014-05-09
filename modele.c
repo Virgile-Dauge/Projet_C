@@ -172,7 +172,7 @@ int retrait_food(modele_t *m, int noFood){
 		return 0;
 	}
 }
-int calcul_proximite(modele_t *m, int noBoid){
+int calcul_visibilite(modele_t *m, int noBoid){
 	int i;
 	m->nbBoidProx = 0;
 	m->nbPreProx = 0;
@@ -190,14 +190,25 @@ int calcul_proximite(modele_t *m, int noBoid){
 			m->nbPreProx++;
 		}
 	}
-	m->foodProx = new_vecteur(10000,10000,10000);
+	vecteur_t *depart = new_vecteur(10000,10000,10000);
 	for(i=0;i<m->nbFood;i++){
 		if(boid_can_see(m->tabBoid[noBoid],m->tabFood[i])){
-			if(distance_boid(m->tabBoid[noBoid],m->foodProx)>distance_boid(m->tabBoid[noBoid],m->tabFood[i])){
+			if(distance_boid(m->tabBoid[noBoid],depart)>distance_boid(m->tabBoid[noBoid],m->tabFood[i])){
 				m->foodProx = m->tabFood[i];
 			}
 		}
 	}
+}
+//les regles de calculs nécéssitent des calculs préparatoires (ici calcul_visibilite)
+vecteur_t *regle_regroupement(modele_t *m,int coefDeplacement){
+	vecteur_t *result = new_vecteur(0,0,0);
+	int i;
+	for(i=0;i<m->nbBoidProx;i++){
+		add_vecteur(result,m->tabBoidProx[i]->pos);
+	}
+	div_vecteur(result,m->nbBoidProx);
+	div_vecteur(result,coefDeplacement);
+	return result;
 }
 /*
 int calcul_deplacement(int noBoid){

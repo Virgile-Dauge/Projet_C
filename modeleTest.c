@@ -14,7 +14,8 @@ int ajout_food_test();
 int retrait_boid_test();
 int retrait_pre_test();
 int retrait_food_test();
-int calcul_proximite_test();
+int calcul_visibilite_test();
+int regle_regroupement_test();
 
 int main(int argc, char** argv){
 	new_modele_test();
@@ -24,7 +25,8 @@ int main(int argc, char** argv){
 	retrait_boid_test();
 	retrait_pre_test();
 	retrait_food_test();
-	calcul_proximite_test();
+	calcul_visibilite_test();
+	regle_regroupement_test();
 	return 1;
 }
 int new_modele_test(){
@@ -262,7 +264,7 @@ int retrait_food_test(){
 		return 0;
 	}
 }
-int calcul_proximite_test(){
+int calcul_visibilite_test(){
 	int ok = 1;
 
 	//Mise en place de l'environnement:
@@ -316,7 +318,7 @@ int calcul_proximite_test(){
 	vecteur_t *foodProx = n2;
 
 
-	calcul_proximite(m,0);
+	calcul_visibilite(m,0);
 
 	//verif tableau de boids à proximité (b est censé voir b0 et b1)
 	if(m->nbBoidProx == 2){
@@ -344,10 +346,55 @@ int calcul_proximite_test(){
 		ok = 0;
 	}
 	if(ok){
-		printf("calcul_proximite [OK]\n");
+		printf("calcul_visibilite [OK]\n");
 		return 1;
 	}else{
-		printf("calcul_proximite [NOK]\n");
+		printf("calcul_visibilite [NOK]\n");
+		return 0;
+	}
+}
+int regle_regroupement_test(){
+	int ok = 1;
+
+	//Mise en place de l'environnement:
+
+	//création du modèle
+	modele_t *m = new_modele(10,10,10);
+
+	//création de boids
+	boid_t *b = new_boid(new_vecteur(0,0,0),100);
+	boid_t *b0 = new_boid(new_vecteur(30,0,0),10);
+	boid_t *b1 = new_boid(new_vecteur(0,0,30),10);
+	boid_t *b2 = new_boid(new_vecteur(0,30,0),10);
+	boid_t *b3 = new_boid(new_vecteur(150,0,100),10);
+
+	//ajouts des boids au modéle
+	ajout_boid(m,b);
+	ajout_boid(m,b0);
+	ajout_boid(m,b1);
+	ajout_boid(m,b2);
+	ajout_boid(m,b3);
+
+	vecteur_t *etalon = new_vecteur(1,1,1);
+
+	int i;
+	for(i=0;i<10;i++){
+		//traitement préalable 
+		calcul_visibilite(m,0);
+		if(!equals_vecteur(regle_regroupement(m,10),etalon)){
+			ok = 0;
+		}
+		/*
+		m->tabBoid[0]->vit=regle_regroupement(m,10);
+		add_vecteur(m->tabBoid[0]->pos,m->tabBoid[0]->vit);
+		print_boid(m->tabBoid[0]);
+		*/
+	}
+	if(ok){
+		printf("regle_regroupement [OK]\n");
+		return 1;
+	}else{
+		printf("regle_regroupement [NOK]\n");
 		return 0;
 	}
 }

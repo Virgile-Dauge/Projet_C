@@ -18,7 +18,8 @@ int ajout_food(modele_t *m, vecteur_t *v);
 int retrait_boid(modele_t *m, int noBoid);
 int retrait_pre(modele_t *m, int noBoid);
 int retrait_food(modele_t *m, int noBoid);
-
+int calcul_visibilite(modele_t *m, int noBoid);
+vecteur_t * regle_regroupement(modele_t *m,int coefDeplacement);
 int calcul_deplacement(int noBoid);
 vecteur_t *somme_pos(boid_t *tab[],int tailleTab);
 vecteur_t *regle_1(boid_t *b,vecteur_t *somme, int nbPoisson);

@@ -58,7 +58,7 @@ int equals_vecteur(vecteur_t *pos0,vecteur_t *pos1){
 	}
 }
 void print_vecteur(vecteur_t *pos){
-	printf("(%f,%f,%f\n)",pos->x , pos->y, pos->z);
+	printf("(%f,%f,%f)\n",pos->x , pos->y, pos->z);
 }
 char *toString_vecteur(vecteur_t *pos){
 	char *chaine = NULL;
