@@ -18,21 +18,20 @@ modele_t *new_modele(int maxBoid, int maxPre, int maxFood){
 		modele->nbFood =0;		
 		modele->nbBoidProx =0;
 		modele->nbPreProx =0;
-		modele->tabBoidProx = NULL;
-		modele->tabPreProx = NULL;
 		modele->foodProx = NULL;
+
 		//allocation mémoire du tableau de pointeurs
 		boid_t **tabBoid= malloc(maxBoid*sizeof(boid_t*));
 		//si l'allocation a réussi
 		if(tabBoid){
 			//on dirige le pointeur du modele vers le tableau de pointeurs précédement créé
 			modele->tabBoid = tabBoid;
-		
 		}else{
 			//si l'allocation échoue : création du message d'erreur et arret 
         	fprintf (stderr, "Memoire insuffisante\n");
         	exit (EXIT_FAILURE);
     	}
+
     	//allocation mémoire du tableau de pointeurs
     	boid_t **tabPre= malloc(maxPre*sizeof(boid_t*));
 		//si l'allocation a réussi
@@ -44,6 +43,7 @@ modele_t *new_modele(int maxBoid, int maxPre, int maxFood){
         	fprintf (stderr, "Memoire insuffisante\n");
         	exit (EXIT_FAILURE);
     	}
+
     	//allocation mémoire du tableau de pointeurs
     	vecteur_t **tabFood= malloc(maxFood*sizeof(vecteur_t*));
     	//si l'allocation a réussi
@@ -55,18 +55,19 @@ modele_t *new_modele(int maxBoid, int maxPre, int maxFood){
         	fprintf (stderr, "Memoire insuffisante\n");
         	exit (EXIT_FAILURE);
     	}
+
     	//allocation mémoire du tableau de pointeurs
     	boid_t **tabBoidProx= malloc(maxBoid*sizeof(boid_t*));
 		//si l'allocation a réussi
 		if(tabBoidProx){
 			//on dirige le pointeur du modele vers le tableau de pointeurs précédement créé
 			modele->tabBoidProx = tabBoidProx;
-		
 		}else{
 			//si l'allocation échoue : création du message d'erreur et arret 
         	fprintf (stderr, "Memoire insuffisante\n");
         	exit (EXIT_FAILURE);
     	}
+
     	//allocation mémoire du tableau de pointeurs
     	boid_t **tabPreProx= malloc(maxPre*sizeof(boid_t*));
 		//si l'allocation a réussi
@@ -176,24 +177,40 @@ int calcul_visibilite(modele_t *m, int noBoid){
 	int i;
 	m->nbBoidProx = 0;
 	m->nbPreProx = 0;
+	//pour tous les boids du modele
 	for(i=0;i<m->nbBoid;i++){
+		//si ce n'est pas le boid que l'on étudie
 		if(i != noBoid){
+			//si le boid que l'on étudie peut voir le boid à la position i du tableau de boids
 			if(boid_can_see(m->tabBoid[noBoid],m->tabBoid[i]->pos)){
+			//alors on stocke le boid visible dans le tableau des boids à proximité
 			m->tabBoidProx[m->nbBoidProx]= m->tabBoid[i];
+			//et on incrémente le nb de boids à proximité
 			m->nbBoidProx++;
 			}
 		}
 	}
+	//pour tous les predateurs du modele
 	for(i=0;i<m->nbPre;i++){
+		//si le boid que l'on etudie peut voir le prédateur
 		if(boid_can_see(m->tabBoid[noBoid],m->tabPre[i]->pos)){
+			//alors on stocke le prédateur visible dans le tableau des prédateurs à proximité
 			m->tabPreProx[m->nbPreProx]=m->tabPre[i];
+			//et on incrémente le nb de prédateurs à proximité
 			m->nbPreProx++;
 		}
 	}
+	//création d'un vecteur de départ pour la comparaison de distance (considéré infini)
 	vecteur_t *depart = new_vecteur(10000,10000,10000);
+	//Pour tous les sources de nourriture du modèle
 	for(i=0;i<m->nbFood;i++){
+		//si le boid que l'on etudie peut voir la nourriture
 		if(boid_can_see(m->tabBoid[noBoid],m->tabFood[i])){
+			//Si la distance entre le boid et la nourriture et plus petite que le min précédent
 			if(distance_boid(m->tabBoid[noBoid],depart)>distance_boid(m->tabBoid[noBoid],m->tabFood[i])){
+				//on met a jour l'élément comparateur
+				depart = m->tabFood[i];
+				//on stocke la position de la nourriture la plus proche
 				m->foodProx = m->tabFood[i];
 			}
 		}
@@ -203,12 +220,93 @@ int calcul_visibilite(modele_t *m, int noBoid){
 vecteur_t *regle_regroupement(modele_t *m,int coefDeplacement){
 	vecteur_t *result = new_vecteur(0,0,0);
 	int i;
+	//pour chaque boid à proximité (visible)
 	for(i=0;i<m->nbBoidProx;i++){
+		//on ajoute vecteur position du boid a la somme des vecteurs position 
 		add_vecteur(result,m->tabBoidProx[i]->pos);
 	}
+	//on divisse la somme des vecteurs positions par le nombre de boids pris en compte
 	div_vecteur(result,m->nbBoidProx);
+	//on divise le vecteur position obtenu pour simuler la lenteur du déplacement du boid
 	div_vecteur(result,coefDeplacement);
+	//on retourne le vecteur de déplacement obtenu
 	return result;
+}
+vecteur_t *regle_evitement(modele_t *m,int noBoid, double distance){
+	vecteur_t *result = new_vecteur(0,0,0);
+	int i;
+	double distanceReele =0;
+	//pour tous les boids à proximité de celui étudié
+	for(i=0;i<m->nbBoidProx;i++){
+		//on calcule la distance séparant le boid de celui étudié
+		distanceReele = distance_boid(m->tabBoid[noBoid],m->tabBoidProx[i]->pos);
+		//si cette distance est inferieur à la distance de seuil passée en parametre
+		if(distanceReele < distance){
+			//on ajoute au vecteur résultat la position du boid que l'on étudie
+			add_vecteur(result,m->tabBoid[noBoid]->pos);
+			//on soustrait au vecteur résultat la position du boid qui est trop pres
+			sub_vecteur(result,m->tabBoidProx[i]->pos);
+		}
+	}
+	return result;
+}
+vecteur_t *regle_harmonisation(modele_t *m,int coefDeplacement){
+	vecteur_t *result = new_vecteur(0,0,0);
+	int i;
+	//pour chaque boid à proximité (visible)
+	for(i=0;i<m->nbBoidProx;i++){
+		//on ajoute vecteur position du boid a la somme des vecteurs vitesse 
+		add_vecteur(result,m->tabBoidProx[i]->vit);
+	}
+	//on divisse la somme des vecteurs vitesse par le nombre de boids pris en compte
+	div_vecteur(result,m->nbBoidProx);
+	//on divise le vecteur obtenu pour simuler la lenteur du déplacement du boid
+	div_vecteur(result,coefDeplacement);
+	//on retourne le vecteur de déplacement obtenu
+	return result;
+}
+//calcule et retourne le vecteur de déplacement d'un besoin primaire du boid
+vecteur_t *regle_aTable(modele_t *m, int coefDeplacement){
+	vecteur_t *result = new_vecteur(0,0,0);
+	copy_vecteur(result,m->foodProx);
+	//on divise le vecteur obtenu pour simuler la lenteur du déplacement du boid
+	div_vecteur(result,coefDeplacement);
+	//on retourne le vecteur de déplacement obtenu
+	return result;
+}
+vecteur_t *regle_fuitePre(modele_t *m,int noBoid, int coefDeplacement,int distanceCrit){
+	vecteur_t *result = new_vecteur(0,0,0);
+	int i;
+	double distanceReele =0;
+	for(i=0;i<m->nbPreProx;i++){
+		//on calcule la distance séparant le boid de celui étudié
+		distanceReele = distance_boid(m->tabBoid[noBoid],m->tabPreProx[i]->pos);
+		//si cette distance est inferieur à la distance de seuil passée en parametre
+		if(distanceReele < distanceCrit){
+			//on ajoute au vecteur résultat la position du boid que l'on étudie
+			add_vecteur(result,m->tabBoid[noBoid]->pos);
+			//on soustrait au vecteur résultat la position du predateur qui est trop pres
+			sub_vecteur(result,m->tabPreProx[i]->pos);
+		}
+	}
+	//on divise le vecteur obtenu pour simuler la lenteur du déplacement du boid
+	div_vecteur(result,coefDeplacement);
+	//on retourne le vecteur de déplacement obtenu
+	return result;
+}
+int calcul_deplacement_boids(modele_t *m){
+	int i;
+	vecteur_t *result = new_vecteur(0,0,0);
+	for(i=0;i<m->nbBoid;i++){
+		calcul_visibilite(m,i);
+		add_vecteur(result,regle_regroupement(m,10));
+		add_vecteur(result,regle_evitement(m,i,5));
+		add_vecteur(result,regle_harmonisation(m,10));
+		add_vecteur(result,regle_aTable(m,10));
+		add_vecteur(result,regle_fuitePre(m,i,5,50));
+		m->tabBoid[i]->vit = result;
+		add_vecteur(m->tabBoid[i]->pos,m->tabBoid[i]->vit);
+	}
 }
 /*
 int calcul_deplacement(int noBoid){

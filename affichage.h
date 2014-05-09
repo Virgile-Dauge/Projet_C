@@ -9,5 +9,6 @@ void pre_dessin();
 void dessin_point(double x, double y, double z,int taille, int r, int g, int b);
 void dessin_point_from_vect(vecteur_t *v,int taille, int r, int g, int b);
 void dessin_boid(boid_t *b);
+void dessin_modele(modele_t *m);
 void maj_affichage();
 #endif

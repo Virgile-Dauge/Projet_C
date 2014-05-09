@@ -16,17 +16,19 @@ void main(int argc, char ** argv){
 	int quit =0;
 	int lastSynchro=0; //entier mémorisant le temps écoulé depuis la derniere synchro
 	int temps=0;
-	int fps=1;
+	int fps=30;
 	int fullscreen = 0;
 	//INITIALISATION DE LA SDL
 	init(xPix,yPix);
 	SDL_Event event;
 	pre_dessin();
-	vecteur_t *v = new_vecteur(10,10,10);
-	boid_t *b = new_boid(v,50);
-	dessin_boid(b);
+
+
 	//mise en place de la vue
-	gluLookAt(200,200,200,0,0,0,0,0,1);
+	gluLookAt(200,200,200,1000,1000,1000,0,0,1);
+
+	//création du modéle 
+	modele_t *m = new_modele(10,2,2);
 	while(!quit){
 		//gestion des événements
 		while(SDL_PollEvent(&event)){
@@ -39,10 +41,23 @@ void main(int argc, char ** argv){
 					break;
 				//si l'événemenet correspond à un appui sur une touche
 				case SDL_KEYUP:
-				//si appui sur la touche echap
+					//si appui sur la touche echap
 					if(event.key.keysym.sym == SDLK_ESCAPE){
 						//arret de l'application
 						quit=1;  
+					}
+					break;
+					//si appui sur la touche b
+					if(event.key.keysym.sym == SDLK_b){
+						//ajout de boid
+						//ajout_boid(m,new_boid(new_vecteur(rand()%(1500-1000) +1000,rand()%(1500-1000) +1000,rand()%(1500-1000) +1000),100));
+						//rand()%(1500-1000) +1000;
+						ajout_boid(m,new_boid(new_vecteur(1000,1000,1000),100));  
+					}
+					break;
+					//si appui sur la touche p
+					if(event.key.keysym.sym == SDLK_p){
+						//ajout predateur 
 					}
 					break;
 					//si appui sur la touche f
@@ -57,14 +72,19 @@ void main(int argc, char ** argv){
 						}
 						*/
 					}
+
 					break;	
 			}
 		}
 		//récupération du temps écoulé depuis le lancement de l'application
 		temps = SDL_GetTicks();
 		if(temps - lastSynchro > 1000/fps){
+			boid_t *b = new_boid(new_vecteur(1000,1000,1000),100);
+			dessin_boid(b);
 			maj_affichage();
 			lastSynchro = SDL_GetTicks();
+			//calcul_deplacement_boids(m);
+			//dessin_modele(m);
 		}/*else{
 			//sinon on endors le processus (économie de calculs processeur)
 			SDL_Delay(1000/fps*(temps - lastSynchro));

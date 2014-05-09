@@ -5,6 +5,7 @@
 #include <GL/glu.h>
 #include "boid.h"
 #include "vecteur.h"
+#include "modele.h"
 
 int init(int xPix, int yPix){
 	SDL_Surface *ecran = NULL;
@@ -79,7 +80,13 @@ void dessin_point_from_vect(vecteur_t *v,int taille, int r, int g, int b){
 	glEnd();
 }
 void dessin_boid(boid_t *b){
-	dessin_point_from_vect(b->pos,10,b->r,b->g,b->b);
+	dessin_point_from_vect(b->pos,100,b->r,b->g,b->b);
+}
+void dessin_modele(modele_t *m){
+	int i;
+	for(i=0;i<m->nbBoid;i++){
+		dessin_boid(m->tabBoid[i]);
+	}
 }
 void maj_affichage(){
 	glFlush();
