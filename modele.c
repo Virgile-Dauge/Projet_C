@@ -216,6 +216,13 @@ int calcul_visibilite(modele_t *m, int noBoid){
 		}
 	}
 }
+vecteur_t *regle_random(int coefDeplacement){
+	vecteur_t *result = new_vecteur(rand()%(100),rand()%(100),rand()%(100));
+	//on divise le vecteur position obtenu pour simuler la lenteur du déplacement du boid
+	div_vecteur(result,coefDeplacement);
+	//on retourne le vecteur de déplacement obtenu
+	return result;
+}
 //les regles de calculs nécéssitent des calculs préparatoires (ici calcul_visibilite)
 vecteur_t *regle_regroupement(modele_t *m,int coefDeplacement){
 	vecteur_t *result = new_vecteur(0,0,0);
@@ -294,16 +301,26 @@ vecteur_t *regle_fuitePre(modele_t *m,int noBoid, int coefDeplacement,int distan
 	//on retourne le vecteur de déplacement obtenu
 	return result;
 }
+vecteur_t *regle_centre(int coefDeplacement){
+	vecteur_t *result = new_vecteur(1000,1000,1000);
+	//on divise le vecteur position obtenu pour simuler la lenteur du déplacement du boid
+	div_vecteur(result,coefDeplacement);
+	//on retourne le vecteur de déplacement obtenu
+	return result;
+}
 int calcul_deplacement_boids(modele_t *m){
 	int i;
 	vecteur_t *result = new_vecteur(0,0,0);
 	for(i=0;i<m->nbBoid;i++){
 		calcul_visibilite(m,i);
-		add_vecteur(result,regle_regroupement(m,10));
-		add_vecteur(result,regle_evitement(m,i,5));
-		add_vecteur(result,regle_harmonisation(m,10));
-		add_vecteur(result,regle_aTable(m,10));
-		add_vecteur(result,regle_fuitePre(m,i,5,50));
+		add_vecteur(result,regle_random(100));
+		add_vecteur(result,regle_regroupement(m,100));
+		add_vecteur(result,regle_evitement(m,i,200));
+		//add_vecteur(result,regle_harmonisation(m,10));
+		//add_vecteur(result,regle_aTable(m,10));
+		//add_vecteur(result,regle_fuitePre(m,i,5,50));
+		add_vecteur(result,regle_centre(100));
+		
 		m->tabBoid[i]->vit = result;
 		add_vecteur(m->tabBoid[i]->pos,m->tabBoid[i]->vit);
 	}

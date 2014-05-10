@@ -5,6 +5,7 @@
 
 
 int init(int xPix, int yPix);
+//void vue();
 void pre_dessin();
 void dessin_point(double x, double y, double z,int taille, int r, int g, int b);
 void dessin_point_from_vect(vecteur_t *v,int taille, int r, int g, int b);

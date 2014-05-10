@@ -19,11 +19,13 @@ int retrait_boid(modele_t *m, int noBoid);
 int retrait_pre(modele_t *m, int noBoid);
 int retrait_food(modele_t *m, int noBoid);
 int calcul_visibilite(modele_t *m, int noBoid);
+vecteur_t *regle_random(int coefDeplacement);
 vecteur_t * regle_regroupement(modele_t *m,int coefDeplacement);
 vecteur_t *regle_evitement(modele_t *m,int noBoid, double distance);
 vecteur_t *regle_harmonisation(modele_t *m,int coefDeplacement);
 vecteur_t *regle_aTable(modele_t *m, int coefDeplacement);
 vecteur_t *regle_fuitePre(modele_t *m, int noBoid, int coefDeplacement,int distanceCrit);
+vecteur_t *regle_centre(int coefDeplacement);
 int calcul_deplacement_boids(modele_t *m);
 
 
