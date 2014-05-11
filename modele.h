@@ -3,7 +3,7 @@
 #include "vecteur.h"
 #include "boid.h"
 typedef struct modele{
-	int nbBoid, maxBoid, nbPre, maxPre, nbBoidProx, nbPreProx, nbFood, maxFood;
+	int nbBoid, maxBoid, nbPre, maxPre, nbBoidProx, nbPreProx, nbFood, maxFood,dimention3;
 	boid_t **tabBoid;
 	boid_t **tabPre;
 	vecteur_t **tabFood;
@@ -11,7 +11,7 @@ typedef struct modele{
 	boid_t **tabPreProx;
 	vecteur_t *foodProx;
 } modele_t;
-modele_t *new_modele(int maxBoid, int maxPre, int maxFood);
+modele_t *new_modele(int maxBoid, int maxPre, int maxFood, int dimention3);
 int ajout_boid(modele_t *m, boid_t *b);
 int ajout_pre(modele_t *m, boid_t *b);
 int ajout_food(modele_t *m, vecteur_t *v);

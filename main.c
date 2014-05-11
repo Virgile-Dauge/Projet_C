@@ -17,6 +17,7 @@ int main(int argc, char ** argv){
 	int lastSynchro=0; //entier mémorisant le temps écoulé depuis la derniere synchro
 	int temps=0;
 	int fps=60;
+	int dim3 = 0;
 	//int fullscreen = 0;
 	//INITIALISATION DE LA SDL
 	init(xPix,yPix);
@@ -24,16 +25,22 @@ int main(int argc, char ** argv){
 	SDL_EnableKeyRepeat(10,10);
 
 	//création du modéle 
-	modele_t *m = new_modele(1000,2,2);
+	modele_t *m = new_modele(1000,10,5,dim3);
 	int i;
-	for(i=0;i<20;i++){
-		ajout_boid(m,new_boid(new_vecteur(rand()%(1200-800) +800,rand()%(1200-800) +800,rand()%(1200-800) +800),500));
+	for(i=0;i<500;i++){
+		ajout_boid(m,new_boid(new_vecteur(rand()%(1200-800) +800,rand()%(1200-800)+800 ,rand()%(1200-800) +800),500));
+	}
+	for(i=0;i<10;i++){
+		ajout_pre(m,new_boid(new_vecteur(rand()%(1500-600) +600,rand()%(1500-600) +600,rand()%(1500-600) +600),500));
+	}
+	for(i=0;i<5;i++){
+		ajout_food(m,new_vecteur(rand()%(1500-600) +600,rand()%(1500-600) +600,rand()%(1500-600) +600));
 	}
 
 	//variables caméra
-	int x =0;
-	int y =0;
-	int z =0;
+	int x =600;
+	int y =600;
+	int z =600;
 	while(!quit){
 		//gestion des événements
 		while(SDL_PollEvent(&event)){
@@ -46,36 +53,11 @@ int main(int argc, char ** argv){
 					break;
 				//si l'événemenet correspond à un appui sur une touche
 				case SDL_KEYUP:
-					switch (event.key.keysym.sym)
-            		{
-             
-                
-					//si appui sur la touche echap
-					case SDLK_ESCAPE:
-						//arret de l'application
-						quit=1;  
-					break;
-
-					//GESTION CAM
-
-					case SDLK_z:
-						z++;
-					break;
-					case SDLK_s:
-						z--;
-					break;
-					case SDLK_q:
-						y++; 
-					break;
-					case SDLK_d:
-						y--;
-					break;
-					case SDLK_r:
-						x++; 
-					break;
-					case SDLK_f:
-						x--;
-					break;
+					//si l'on appuie sur la touche échap, 
+					if(event.key.keysym.sym == SDLK_ESCAPE){
+						//on quitte la boucle "infinie"
+						quit=1;
+					}
 					/*
 					//si appui sur la touche b
 					if(event.key.keysym.sym == SDLK_b){
@@ -102,9 +84,6 @@ int main(int argc, char ** argv){
 							SDL_SetVideoMode(xPix,yPix, 32, SDL_OPENGL | SDL_FULLSCREEN);
 						}
 						*/
-					
-					}
-
 					break;	
 			}
 		}
@@ -115,11 +94,6 @@ int main(int argc, char ** argv){
 			pre_dessin(x,y,z);
 			calcul_deplacement_boids(m);
 			dessin_modele(m);
-			//dessin_boid(m->tabBoid[0]);
-			//dessin_boid(m->tabBoid[1]);
-			//dessin_boid(m->tabBoid[2]);
-			//dessin_point(1000,1000,1000,10,couleur,0,0);
-			//dessin_point(1000,1000,800,10,0,255,0);
 			maj_affichage();
 		}/*else{
 			//calcul_deplacement_boids(m);
@@ -129,4 +103,5 @@ int main(int argc, char ** argv){
 		}*/
 	}
 	SDL_Quit();
+	return 1;
 }

@@ -38,8 +38,8 @@ int main(int argc, char** argv){
 	return 1;
 }
 int new_modele_test(){
-	modele_t *m = new_modele(100,10,0);
-	if(m->maxBoid == 100 && m->maxPre == 10){
+	modele_t *m = new_modele(100,10,0,1);
+	if(m->maxBoid == 100 && m->maxPre == 10 && m->dimention3== 1){
 		printf("new_modele [OK]\n");
 		return 1;
 	}else{
@@ -50,14 +50,14 @@ int new_modele_test(){
 int ajout_boid_test(){
 	int ok =1;
 	//test d'ajout dans de bonnes conditions
-	modele_t *m = new_modele(100,10,0);
+	modele_t *m = new_modele(100,10,0,1);
 	boid_t *b = new_boid(new_vecteur(0,0,0),10);
 	ajout_boid(m,b);
 	if(!equals_boid(b,m->tabBoid[0])){
 		ok = 0;
 	}
 	//test de débordement
-	modele_t *m0 = new_modele(0,0,0);
+	modele_t *m0 = new_modele(0,0,0,1);
 	if(ajout_boid(m0,b)){
 		ok = 0;
 	}
@@ -75,7 +75,7 @@ int ajout_pre_test(){
 	int ok=1;
 
 	//test d'ajout dans de bonnes conditions
-	modele_t *m = new_modele(100,10,0);
+	modele_t *m = new_modele(100,10,0,1);
 	boid_t *b = new_boid(new_vecteur(0,0,0),10);
 	ajout_pre(m,b);
 	if(!equals_boid(b,m->tabPre[0])){
@@ -83,7 +83,7 @@ int ajout_pre_test(){
 	}
 
 	//test de débordement
-	modele_t *m0 = new_modele(0,0,0);
+	modele_t *m0 = new_modele(0,0,0,1);
 	if(ajout_pre(m0,b)){
 		ok = 0;
 		printf("ajout_pre [débordement]\n");
@@ -101,7 +101,7 @@ int ajout_pre_test(){
 int ajout_food_test(){
 	int ok =1;
 	//test d'ajout dans de bonnes conditions
-	modele_t *m = new_modele(100,10,1);
+	modele_t *m = new_modele(100,10,1,1);
 	vecteur_t *v = new_vecteur(0,0,0);
 	ajout_food(m,v);
 	if(!equals_vecteur(v,m->tabFood[0])){
@@ -125,8 +125,8 @@ int ajout_food_test(){
 int retrait_boid_test(){
 	int ok = 1;
 
-	modele_t *metalon = new_modele(100,10,0);
-	modele_t *m = new_modele(100,10,0);
+	modele_t *metalon = new_modele(100,10,0,1);
+	modele_t *m = new_modele(100,10,0,1);
 	boid_t *b = new_boid(new_vecteur(0,0,0),10);
 	boid_t *b0 = new_boid(new_vecteur(0,0,0),10);
 	boid_t *b1 = new_boid(new_vecteur(1,0,0),10);
@@ -175,8 +175,8 @@ int retrait_boid_test(){
 int retrait_pre_test(){
 	int ok = 1;
 
-	modele_t *metalon = new_modele(100,10,0);
-	modele_t *m = new_modele(100,10,0);
+	modele_t *metalon = new_modele(100,10,0,1);
+	modele_t *m = new_modele(100,10,0,1);
 	boid_t *b = new_boid(new_vecteur(0,0,0),10);
 	boid_t *b0 = new_boid(new_vecteur(0,0,0),10);
 	boid_t *b1 = new_boid(new_vecteur(1,0,0),10);
@@ -225,8 +225,8 @@ int retrait_pre_test(){
 int retrait_food_test(){
 	int ok = 1;
 
-	modele_t *metalon = new_modele(100,10,10);
-	modele_t *m = new_modele(100,10,10);
+	modele_t *metalon = new_modele(100,10,10,1);
+	modele_t *m = new_modele(100,10,10,1);
 
 	vecteur_t *v = new_vecteur(0,0,0);
 	vecteur_t *v0 = new_vecteur(0,0,0);
@@ -278,7 +278,7 @@ int calcul_visibilite_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(0,0,0),100);
@@ -316,16 +316,25 @@ int calcul_visibilite_test(){
 	ajout_food(m,n1);
 	ajout_food(m,n2);
 
-
-
-
-	//tableau de prédateurs à proximité (b est censé voir p1 et p2)
-	int nbPreProxAt = 2;
-
 	//coordonnées de la nourriture visible la plus proche:
 	vecteur_t *foodProx = n2;
 
 
+	calcul_visibilite(m,0);
+
+	//verif tableau de boids à proximité (b est censé voir b0 et b1)
+	if(m->nbBoidProx == 2){
+		if(!equals_boid(m->tabBoidProx[0],b0) || !equals_boid(m->tabBoidProx[1],b1)){
+			ok = 0;
+		}
+	}else{
+		ok = 0;
+	}
+
+	//passage au modèle 2D
+	m->dimention3 = 0;
+
+	
 	calcul_visibilite(m,0);
 
 	//verif tableau de boids à proximité (b est censé voir b0 et b1)
@@ -367,7 +376,7 @@ int regle_regroupement_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(0,0,0),100);
@@ -404,7 +413,7 @@ int regle_evitemment_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(10,10,10),100);
@@ -441,7 +450,7 @@ int regle_harmonisation_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(0,0,0),100);
@@ -484,7 +493,7 @@ int regle_aTable_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(0,0,0),100);
@@ -524,7 +533,7 @@ int regle_fuitePre_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(0,0,0),100);
@@ -559,7 +568,6 @@ int regle_fuitePre_test(){
 		print_vecteur(regle_fuitePre(m,0,5,50));
 		return 0;
 	}
-
 }
 int calcul_deplacement_boids_test(){
 	int ok = 1;
@@ -567,7 +575,7 @@ int calcul_deplacement_boids_test(){
 	//Mise en place de l'environnement:
 
 	//création du modèle
-	modele_t *m = new_modele(10,10,10);
+	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
 	boid_t *b = new_boid(new_vecteur(0,0,0),100);
@@ -607,11 +615,10 @@ int calcul_deplacement_boids_test(){
 
 
 	calcul_deplacement_boids(m);
-	
 
-	//verif tableau de boids à proximité (b est censé voir b0 et b1)
-	
+	// VERIFICATIONS à mettre en place
 
+	
 	if(ok){
 		printf("calcul_visibilite [OK]\n");
 		return 1;

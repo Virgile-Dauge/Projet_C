@@ -53,8 +53,16 @@ int equals_boid(boid_t *b1, boid_t *b2){
 double distance_boid(boid_t *b, vecteur_t *v){
 	return sqrt(pow(b->pos->x - v->x,2)+pow(b->pos->y - v->y,2)+pow(b->pos->z - v->z,2));
 }
-int boid_can_see(boid_t *b, vecteur_t *posObjet){
-	double distance = distance_boid(b,posObjet);
+double distance_boid_2d(boid_t *b, vecteur_t *v){
+	return sqrt(pow(b->pos->x - v->x,2)+pow(b->pos->y - v->y,2));
+}
+int boid_can_see(boid_t *b, vecteur_t *posObjet, int dimention3){
+	double distance =0;
+	if(dimention3){
+		distance = distance_boid(b,posObjet);
+	}else{
+		distance = distance_boid_2d(b,posObjet);
+	}
 	if(distance < b->distanceVue){
 		return 1;
 	}else{

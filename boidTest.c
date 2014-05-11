@@ -12,6 +12,7 @@ int get_boid_pos_test();
 int add_boid_pos_test();
 int distance_boid_test();
 int boid_can_see_test();
+int distance_boid_2d_test();
 
 int main(int argc, char ** argv){
 	new_boid_test();
@@ -20,7 +21,9 @@ int main(int argc, char ** argv){
 	get_boid_pos_test();
 	add_boid_pos_test();
 	distance_boid_test();
+	distance_boid_2d_test();
 	boid_can_see_test();
+	
 }
 int new_boid_test(){
 	vecteur_t *v = new_vecteur(1,2,3);
@@ -102,16 +105,44 @@ int distance_boid_test(){
 		return 0;
 	}
 }
+int distance_boid_2d_test(){
+	boid_t *b = new_boid(new_vecteur(-10,0,0),10);
+	vecteur_t *v0= new_vecteur(10,0,40);
+	vecteur_t *v1= new_vecteur(-10,10,-58);
+	vecteur_t *v2= new_vecteur(-10,0,850);
+	if(distance_boid_2d(b,v0)== 20.000000 && distance_boid_2d(b,v1) == 10.000000 && distance_boid_2d(b,v2)==0.000000){
+		printf("distance_boid_2d [OK]\n");
+		return 1;
+	}else{
+		printf("distance_boid_2d [NOK]\n");
+		printf("[Attendu]distance_boid_2d(b,v0)= 20.000000\n");
+		printf("[Obtenu]distance_boid_2d(b,v0)=%f\n",distance_boid_2d(b,v0));
+		printf("[Attendu]distance_boid_2d(b,v1)= 10.000000\n");
+		printf("[Obtenu]distance_boid_2d(b,v1)=%f\n",distance_boid_2d(b,v1));
+		printf("[Attendu]distance_boid_2d(b,v2)= 0.000000\n");
+		printf("[Obtenu]distance_boid_2d(b,v2)=%f\n",distance_boid_2d(b,v2));
+		return 0;
+	}
+}
 int boid_can_see_test(){
+	int ok=1;
 	boid_t *b0 = new_boid(new_vecteur(100,100,100),10);
 	boid_t *b1 = new_boid(new_vecteur(1,2,3),1000);
 	boid_t *b2 = new_boid(new_vecteur(1,2,2),10);
-	if(!boid_can_see(b0,b1->pos) && boid_can_see(b1,b0->pos) && boid_can_see(b1,b2->pos) && boid_can_see(b2,b1->pos)){
+	if(!(!boid_can_see(b0,b1->pos,1) && boid_can_see(b1,b0->pos,1) && boid_can_see(b1,b2->pos,1) && boid_can_see(b2,b1->pos,1))){
+		ok=0;
+	}
+	boid_t *b3 = new_boid(new_vecteur(100,100,100),10);
+	boid_t *b4 = new_boid(new_vecteur(1,2,10000),1000);
+	boid_t *b5 = new_boid(new_vecteur(1,2,2),10);
+	if(!(!boid_can_see(b3,b4->pos,0) && boid_can_see(b4,b3->pos,0) && boid_can_see(b4,b5->pos,0) && boid_can_see(b5,b4->pos,0))){
+		ok=0;
+	}
+	if(ok){
 		printf("boid_can_see [OK]\n");
 		return 1;
 	}else{
 		printf("boid_can_see [NOK]\n");
 		return 0;
 	}
-
 }
