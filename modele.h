@@ -30,6 +30,7 @@ vecteur_t *chasse(modele_t *m,int noPre, int coefDeplacement);
 int recherche_proies(modele_t *m,int noPre);
 void limite_vit(vecteur_t *v,double limite);
 double limite_valeur(double x,double limite);
+int application_deplacement(boid_t *b, vecteur_t *v,int coefConservation , int coefReaction);
 int calcul_deplacement_boids(modele_t *m);
 int calcul_deplacement_preds(modele_t *m);
 

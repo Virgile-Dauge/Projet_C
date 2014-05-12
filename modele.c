@@ -354,31 +354,47 @@ double limite_valeur(double x,double limite){
 	}
 	return x;
 }
+int application_deplacement(boid_t *b, vecteur_t *v,int coefConservation , int coefReaction){
+	vecteur_t *result = new_vecteur(0,0,0);
+	int i;
+	int cpt=0;
+	for(i=0;i<coefConservation;i++){
+		add_vecteur(result,b->vit);
+		cpt++;
+	}
+	for(i=0;i<coefReaction;i++){
+		add_vecteur(result,v);
+		cpt++;
+	}
+	div_vecteur(result,cpt);
+	copy_vecteur(b->vit,result);
+	add_vecteur(b->pos,b->vit);
+	return 1;
+}
 int calcul_deplacement_boids(modele_t *m){
 	int i;
 	vecteur_t *result = new_vecteur(0,0,0);
 	for(i=0;i<m->nbBoid;i++){
 		calcul_visibilite(m,i);
 		
-		add_vecteur(result,regle_random(m,i,10000));
+		add_vecteur(result,regle_random(m,i,100000));
 		
-		add_vecteur(result,regle_regroupement(m,i,900));
+		add_vecteur(result,regle_regroupement(m,i,250));
 
 		add_vecteur(result,regle_evitement(m,i,2,1000));
 
-		//add_vecteur(result,regle_harmonisation(m,i,300));
+		//donne des résultats.... inatendus
+		//add_vecteur(result,regle_harmonisation(m,i,10000));
 		
 		add_vecteur(result,regle_aTable(m,i,1100));
 		
-		add_vecteur(result,regle_fuitePre(m,i,100,900));
+		add_vecteur(result,regle_fuitePre(m,i,100,500));
 
 		add_vecteur(result,regle_centre(m,i,8000));
 		
 		limite_vit(result,5);
-		
-		m->tabBoid[i]->vit = result;
 
-		add_vecteur(m->tabBoid[i]->pos,m->tabBoid[i]->vit);
+		application_deplacement(m->tabBoid[i],result,10,4);
 	}
 	return 1;
 }
@@ -434,9 +450,7 @@ int calcul_deplacement_preds(modele_t*m){
 		
 		limite_vit(result,10);
 		
-		m->tabPre[i]->vit = result;
-
-		add_vecteur(m->tabPre[i]->pos,m->tabPre[i]->vit);
+		application_deplacement(m->tabPre[i],result,10,3);
 	}
 	return 1;
 }

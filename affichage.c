@@ -6,6 +6,7 @@
 #include "boid.h"
 #include "vecteur.h"
 #include "modele.h"
+#include <math.h>
 
 int init(int xPix, int yPix){
 	SDL_Surface *ecran = NULL;
@@ -34,7 +35,14 @@ int init(int xPix, int yPix){
     glEnable(GL_DEPTH_TEST);
     return 1;
 }
-void pre_dessin(int x,int y, int z, int dim3){
+void calcul_cam(double phi, double theta,int rayon, vecteur_t *centre){
+	double x,y,z;
+	x= centre->x + rayon*sin(phi)*cos(theta);
+	y= centre->y + rayon*sin(phi)*sin(theta);
+	z= centre->z + rayon*cos(theta);
+	gluLookAt(x,y,z,centre->x,centre->y,centre->z,1,0,0);
+}
+void pre_dessin(double phi,double theta,int rayon,vecteur_t *centre, int dim3){
 	//liberation des buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
     glClear( GL_COLOR_BUFFER_BIT );
@@ -43,10 +51,9 @@ void pre_dessin(int x,int y, int z, int dim3){
     //chargement de la matrice identité dans la matrice de modèle
     glLoadIdentity();
     if(dim3){
-    	// regarde en (1000,1000,1000) depuis le point (x,y,z) avec un vecteur "up" défini sur l'axe x
-    	gluLookAt(x,y,z,1000,1000,1000,1,0,0);
+    	calcul_cam(phi,theta,rayon,centre);
     }else{
-    	gluLookAt(1000,1000,600,1000,1000,0,0,0,1);
+    	gluLookAt(1000,1000,600,1000,1000,0,1,0,0);
     }
     
 }
