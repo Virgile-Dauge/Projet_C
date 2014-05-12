@@ -183,10 +183,10 @@ int calcul_visibilite(modele_t *m, int noBoid){
 		if(i != noBoid){
 			//si le boid que l'on étudie peut voir le boid à la position i du tableau de boids
 			if(boid_can_see(m->tabBoid[noBoid],m->tabBoid[i]->pos,m->dimention3)){
-			//alors on stocke le boid visible dans le tableau des boids à proximité
-			m->tabBoidProx[m->nbBoidProx]= m->tabBoid[i];
-			//et on incrémente le nb de boids à proximité
-			m->nbBoidProx++;
+				//alors on stocke le boid visible dans le tableau des boids à proximité
+				m->tabBoidProx[m->nbBoidProx]= m->tabBoid[i];
+				//et on incrémente le nb de boids à proximité
+				m->nbBoidProx++;
 			}
 		}
 	}
@@ -201,7 +201,7 @@ int calcul_visibilite(modele_t *m, int noBoid){
 		}
 	}
 	//création d'un vecteur de départ pour la comparaison de distance (considéré infini)
-	vecteur_t *depart = new_vecteur(10000,10000,10000);
+	vecteur_t *depart = new_vecteur(100000,100000,100000);
 	//Pour tous les sources de nourriture du modèle
 	for(i=0;i<m->nbFood;i++){
 		//si le boid que l'on etudie peut voir la nourriture
@@ -226,15 +226,16 @@ int calcul_visibilite(modele_t *m, int noBoid){
 	}
 	return 1;
 }
-vecteur_t *regle_random(int coefDeplacement){
+vecteur_t *regle_random(modele_t *m,int noBoid, int coefDeplacement){
 	vecteur_t *result = new_vecteur(rand()%(100),rand()%(100),rand()%(100));
+	sub_vecteur(result,m->tabBoid[noBoid]->pos);
 	//on divise le vecteur position obtenu pour simuler la lenteur du déplacement du boid
 	div_vecteur(result,coefDeplacement);
 	//on retourne le vecteur de déplacement obtenu
 	return result;
 }
 //les regles de calculs nécéssitent des calculs préparatoires (ici calcul_visibilite)
-vecteur_t *regle_regroupement(modele_t *m,int coefDeplacement){
+vecteur_t *regle_regroupement(modele_t *m,int noBoid, int coefDeplacement){
 	vecteur_t *result = new_vecteur(0,0,0);
 	int i;
 	//pour chaque boid à proximité (visible)
@@ -244,12 +245,13 @@ vecteur_t *regle_regroupement(modele_t *m,int coefDeplacement){
 	}
 	//on divisse la somme des vecteurs positions par le nombre de boids pris en compte
 	div_vecteur(result,m->nbBoidProx);
+	sub_vecteur(result,m->tabBoid[noBoid]->pos);
 	//on divise le vecteur position obtenu pour simuler la lenteur du déplacement du boid
 	div_vecteur(result,coefDeplacement);
 	//on retourne le vecteur de déplacement obtenu
 	return result;
 }
-vecteur_t *regle_evitement(modele_t *m,int noBoid, double distance){
+vecteur_t *regle_evitement(modele_t *m,int noBoid, double distance, int coefDeplacement){
 	vecteur_t *result = new_vecteur(0,0,0);
 	int i;
 	double distanceReele =0;
@@ -268,11 +270,12 @@ vecteur_t *regle_evitement(modele_t *m,int noBoid, double distance){
 			add_vecteur(result,m->tabBoid[noBoid]->pos);
 			//on soustrait au vecteur résultat la position du boid qui est trop pres
 			sub_vecteur(result,m->tabBoidProx[i]->pos);
+			div_vecteur(result,coefDeplacement);
 		}
 	}
 	return result;
 }
-vecteur_t *regle_harmonisation(modele_t *m,int coefDeplacement){
+vecteur_t *regle_harmonisation(modele_t *m,int noBoid, int coefDeplacement){
 	vecteur_t *result = new_vecteur(0,0,0);
 	int i;
 	//pour chaque boid à proximité (visible)
@@ -282,15 +285,17 @@ vecteur_t *regle_harmonisation(modele_t *m,int coefDeplacement){
 	}
 	//on divisse la somme des vecteurs vitesse par le nombre de boids pris en compte
 	div_vecteur(result,m->nbBoidProx);
+	sub_vecteur(result,m->tabBoid[noBoid]->pos);
 	//on divise le vecteur obtenu pour simuler la lenteur du déplacement du boid
 	div_vecteur(result,coefDeplacement);
 	//on retourne le vecteur de déplacement obtenu
 	return result;
 }
 //calcule et retourne le vecteur de déplacement d'un besoin primaire du boid
-vecteur_t *regle_aTable(modele_t *m, int coefDeplacement){
+vecteur_t *regle_aTable(modele_t *m,int noBoid, int coefDeplacement){
 	vecteur_t *result = new_vecteur(0,0,0);
 	copy_vecteur(result,m->foodProx);
+	sub_vecteur(result,m->tabBoid[noBoid]->pos);
 	//on divise le vecteur obtenu pour simuler la lenteur du déplacement du boid
 	div_vecteur(result,coefDeplacement);
 	//on retourne le vecteur de déplacement obtenu
@@ -322,12 +327,32 @@ vecteur_t *regle_fuitePre(modele_t *m,int noBoid, int coefDeplacement,int distan
 	//on retourne le vecteur de déplacement obtenu
 	return result;
 }
-vecteur_t *regle_centre(int coefDeplacement){
+vecteur_t *regle_centre(modele_t *m, int noBoid, int coefDeplacement){
 	vecteur_t *result = new_vecteur(1000,1000,1000);
+	
+	sub_vecteur(result,m->tabBoid[noBoid]->pos);
 	//on divise le vecteur position obtenu pour simuler la lenteur du déplacement du boid
 	div_vecteur(result,coefDeplacement);
 	//on retourne le vecteur de déplacement obtenu
 	return result;
+}
+void limite_vit(vecteur_t *v,double limite){
+	v->x = limite_valeur(v->x,limite);
+	v->y = limite_valeur(v->y,limite);
+	v->z = limite_valeur(v->z,limite);
+
+}
+double limite_valeur(double x,double limite){
+	if(x >0){
+		if(x>limite){
+			x = limite;
+		}
+	}else{
+		if(x<-limite){
+			x = -limite;
+		}
+	}
+	return x;
 }
 int calcul_deplacement_boids(modele_t *m){
 	int i;
@@ -335,21 +360,83 @@ int calcul_deplacement_boids(modele_t *m){
 	for(i=0;i<m->nbBoid;i++){
 		calcul_visibilite(m,i);
 		
-		add_vecteur(result,regle_random(100));
+		add_vecteur(result,regle_random(m,i,10000));
+		
+		add_vecteur(result,regle_regroupement(m,i,900));
 
-		add_vecteur(result,regle_regroupement(m,100));
+		add_vecteur(result,regle_evitement(m,i,2,1000));
 
-		add_vecteur(result,regle_evitement(m,i,300));
+		//add_vecteur(result,regle_harmonisation(m,i,300));
+		
+		add_vecteur(result,regle_aTable(m,i,1100));
+		
+		add_vecteur(result,regle_fuitePre(m,i,100,900));
 
-		add_vecteur(result,regle_harmonisation(m,10));
-
-		add_vecteur(result,regle_aTable(m,10));
-
-		add_vecteur(result,regle_fuitePre(m,i,5,50));
-		add_vecteur(result,regle_centre(100));
-
+		add_vecteur(result,regle_centre(m,i,8000));
+		
+		limite_vit(result,5);
+		
 		m->tabBoid[i]->vit = result;
+
 		add_vecteur(m->tabBoid[i]->pos,m->tabBoid[i]->vit);
+	}
+	return 1;
+}
+int recherche_proies(modele_t *m,int noPre){
+	int i;
+	m->nbBoidProx = 0;
+	//pour tous les boids du modele
+	for(i=0;i<m->nbBoid;i++){
+		//si le boid que l'on étudie peut voir le boid à la position i du tableau de boids
+		if(boid_can_see(m->tabPre[noPre],m->tabBoid[i]->pos,m->dimention3)){
+			//alors on stocke le boid visible dans le tableau des boids à proximité
+			m->tabBoidProx[m->nbBoidProx]= m->tabBoid[i];
+			//et on incrémente le nb de boids à proximité
+			m->nbBoidProx++;
+		}
+	}
+	return 1;
+}
+vecteur_t *chasse(modele_t *m,int noPre, int coefDeplacement){
+	vecteur_t *result = new_vecteur(0,0,0);
+	int i;
+	double distanceReele =0;
+	double distanceMin = 100000;
+ 	//pour tous les boids à proximité de celui étudié
+	for(i=0;i<m->nbBoidProx;i++){
+		if(m->dimention3){
+			//on calcule la distance séparant le boid du predateur
+			distanceReele = distance_boid(m->tabPre[noPre],m->tabBoidProx[i]->pos);
+		}else{
+			//on calcule la distance séparant le boid du predateur
+			distanceReele = distance_boid_2d(m->tabPre[noPre],m->tabBoidProx[i]->pos);
+		}
+		//si cette distance est inferieur à la distance de seuil passée en parametre
+		if(distanceReele < distanceMin){
+			distanceMin = distanceReele;
+			//on recopie la position du boid le plus proche dans result
+			copy_vecteur(result,m->tabBoidProx[i]->pos);
+		}
+	}
+	//on soustrait au vecteur résultat la position du predateur
+	sub_vecteur(result,m->tabPre[noPre]->pos);
+	//on simule le déplacement
+	div_vecteur(result,coefDeplacement);
+	return result;
+}
+int calcul_deplacement_preds(modele_t*m){
+	int i;
+	vecteur_t *result = new_vecteur(0,0,0);
+	for(i=0;i<m->nbPre;i++){
+		recherche_proies(m,i);
+
+		add_vecteur(result,chasse(m,i,100));
+		
+		limite_vit(result,10);
+		
+		m->tabPre[i]->vit = result;
+
+		add_vecteur(m->tabPre[i]->pos,m->tabPre[i]->vit);
 	}
 	return 1;
 }

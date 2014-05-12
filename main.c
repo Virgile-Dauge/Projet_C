@@ -9,6 +9,8 @@
 #include "boid.h"
 #include "affichage.h"
 
+//gcc main.c affichage.c modele.c boid.c vecteur.c -o main -lSDL -lGL -lGLU -lm -Wall -Wextra -Wunreachable-code -Wwrite-strings
+
 int main(int argc, char ** argv){
 	//variables pour SDL
 	int xPix=800;
@@ -17,23 +19,29 @@ int main(int argc, char ** argv){
 	int lastSynchro=0; //entier mémorisant le temps écoulé depuis la derniere synchro
 	int temps=0;
 	int fps=60;
-	int dim3 = 0;
-	//int fullscreen = 0;
+	int dim3 = 1;
+
+	//variables pour le modele
+	int nbBoid = 500;
+	int nbPre = 20;
+	int nbFood = 10;
+
 	//INITIALISATION DE LA SDL
 	init(xPix,yPix);
 	SDL_Event event;
+	//activation de la répétition de l'appui sur les touches 
 	SDL_EnableKeyRepeat(10,10);
 
 	//création du modéle 
 	modele_t *m = new_modele(1000,10,5,dim3);
 	int i;
-	for(i=0;i<500;i++){
-		ajout_boid(m,new_boid(new_vecteur(rand()%(1200-800) +800,rand()%(1200-800)+800 ,rand()%(1200-800) +800),500));
+	for(i=0;i<nbBoid;i++){
+		ajout_boid(m,new_boid(new_vecteur(rand()%(1200-800) +800,rand()%(1200-800)+800 ,rand()%(1200-800) +800),200));
 	}
-	for(i=0;i<10;i++){
-		ajout_pre(m,new_boid(new_vecteur(rand()%(1500-600) +600,rand()%(1500-600) +600,rand()%(1500-600) +600),500));
+	for(i=0;i<nbPre;i++){
+		ajout_pre(m,new_boid(new_vecteur(rand()%(1500-600) +600,rand()%(1500-600) +600,rand()%(1500-600) +600),700));
 	}
-	for(i=0;i<5;i++){
+	for(i=0;i<nbFood;i++){
 		ajout_food(m,new_vecteur(rand()%(1500-600) +600,rand()%(1500-600) +600,rand()%(1500-600) +600));
 	}
 
@@ -58,32 +66,6 @@ int main(int argc, char ** argv){
 						//on quitte la boucle "infinie"
 						quit=1;
 					}
-					/*
-					//si appui sur la touche b
-					if(event.key.keysym.sym == SDLK_b){
-						//ajout de boid
-						//ajout_boid(m,new_boid(new_vecteur(rand()%(1200-800) +800,rand()%(1200-800) +800,rand()%(1200-800) +800),100));
-						//rand()%(1500-1000) +1000;
-						//ajout_boid(m,new_boid(new_vecteur(1000,1000,1000),100));  
-					}
-					break;
-					//si appui sur la touche p
-					if(event.key.keysym.sym == SDLK_p){
-						//ajout predateur 
-
-					}
-					break;
-					//si appui sur la touche f
-					if(event.key.keysym.sym == SDLK_f){
-						/*test fullscreen
-						if(fullscreen){
-							fullscreen=0;
-							SDL_SetVideoMode(xPix,yPix, 32, SDL_OPENGL | SDL_RESIZABLE);
-						}else{
-							fullscreen=1;
-							SDL_SetVideoMode(xPix,yPix, 32, SDL_OPENGL | SDL_FULLSCREEN);
-						}
-						*/
 					break;	
 			}
 		}
@@ -93,14 +75,10 @@ int main(int argc, char ** argv){
 			lastSynchro = SDL_GetTicks();
 			pre_dessin(x,y,z);
 			calcul_deplacement_boids(m);
+			calcul_deplacement_preds(m);
 			dessin_modele(m);
 			maj_affichage();
-		}/*else{
-			//calcul_deplacement_boids(m);
-			temps = SDL_GetTicks();
-			//sinon on endors le processus (économie de calculs processeur)
-			SDL_Delay(1000/fps*(temps - lastSynchro));
-		}*/
+		}
 	}
 	SDL_Quit();
 	return 1;

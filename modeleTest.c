@@ -496,26 +496,26 @@ int regle_aTable_test(){
 	modele_t *m = new_modele(10,10,10,1);
 
 	//création de boids
-	boid_t *b = new_boid(new_vecteur(0,0,0),100);
+	boid_t *b = new_boid(new_vecteur(1000,1000,1000),10);
 
 	//ajouts des boids au modéle
 	ajout_boid(m,b);
 
 	//création de la nourriture
-	vecteur_t *n0 = new_vecteur(0,0,50);
-	vecteur_t *n1 = new_vecteur(250,25,15);
-	vecteur_t *n2 = new_vecteur(52,25,15);
+	vecteur_t *n0 = new_vecteur(1200,1000,1000);
+	vecteur_t *n1 = new_vecteur(1005,1000,1000);
+	vecteur_t *n2 = new_vecteur(1012,1203,4512);
 
 	//ajout de la nouriture
 	ajout_food(m,n0);
 	ajout_food(m,n1);
 	ajout_food(m,n2);
 
-	vecteur_t *etalon = new_vecteur(0,0,5);
+	vecteur_t *etalon = new_vecteur(5,0,0);
 
 	//traitement préalable 
 	calcul_visibilite(m,0);
-	if(!equals_vecteur(regle_aTable(m,10),etalon)){
+	if(!equals_vecteur(regle_aTable(m,0,1),etalon)){
 		ok = 0;
 	}
 	if(ok){
@@ -523,7 +523,7 @@ int regle_aTable_test(){
 		return 1;
 	}else{
 		printf("regle_aTable [NOK]\n");
-		print_vecteur(regle_aTable(m,10));
+		print_vecteur(regle_aTable(m,0,1));
 		return 0;
 	}
 }
