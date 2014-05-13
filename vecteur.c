@@ -31,7 +31,6 @@ void div_vecteur(vecteur_t *pos1, int coef){
 	pos1->y=pos1->y/coef;
 	pos1->z=pos1->z/coef;
 }
-
 void add_multi_vecteurs(vecteur_t *pos1, vecteur_t *tab[], int tailleTab){
 	int i;
 	for(i=0;i<tailleTab;i++){
